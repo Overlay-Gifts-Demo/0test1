@@ -1,160 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>JEWELS-AI | 10 Target Drive AR</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JEWELS-AI | Multi-Target Drive AR</title>
 
-<script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-<style>
-body { margin:0; background:#000; overflow:hidden; font-family:sans-serif; }
-
-#blackCurtain{
-position:fixed; top:0; left:0;
-width:100vw; height:100vh;
-background:#000; z-index:99999;
-display:flex; justify-content:center; align-items:center;
-transition:opacity .5s ease;
-}
-
-#loader{
-color:white; font-size:18px;
-letter-spacing:2px; text-transform:uppercase;
-animation:pulse 1.5s infinite;
-}
-
-@keyframes pulse{
-0%{opacity:.4;} 50%{opacity:1;} 100%{opacity:.4;}
-}
-
-[class^="mindar-ui"]{ display:none !important; }
-</style>
+  <style>
+    body { margin: 0; background: #000; overflow: hidden; font-family: sans-serif; }
+    #blackCurtain {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: #000; z-index: 99999; display: flex;
+      flex-direction: column; justify-content: center; align-items: center;
+      transition: opacity 0.5s ease; cursor: pointer;
+    }
+    #loader { color: white; font-size: 18px; text-transform: uppercase; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+    
+    .button-panel { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: none; z-index: 100; }
+    .plan-button { padding: 14px 28px; font-size: 16px; font-weight: bold; border: none; border-radius: 12px; background: linear-gradient(135deg, #5E0F8B 0%, #3e0a5c 100%); color: #fff; cursor: pointer; }
+    
+    #instagramButton { position: fixed; bottom: 25px; right: 25px; width: 55px; height: 55px; z-index: 100000; background: white; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.4); text-decoration: none; }
+    #instagramButton img { width: 38px; height: 38px; }
+    [class^="mindar-ui"] { display: none !important; }
+  </style>
 </head>
 
 <body>
 
 <div id="blackCurtain">
-<div id="loader">Initializing AR...</div>
+  <div style="font-size: 50px; margin-bottom: 20px;">📷</div>
+  <div id="loader">Tap to Start AR</div>
 </div>
 
-<a-scene
-mindar-image="imageTargetSrc: ./targets.mind; uiLoading: no; uiError: no;"
-vr-mode-ui="enabled: false"
-device-orientation-permission-ui="enabled: false"
-renderer="antialias:true; alpha:true">
+<a href="https://www.instagram.com/craftwithdivya/" target="_blank" id="instagramButton">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram">
+</a>
 
-<a-assets>
+<div class="button-panel" id="planButtons">
+  <button class="plan-button" id="toggleButton">▶️ Play Video</button>
+</div>
 
-<!-- 10 Video Assets -->
-<video id="video0" playsinline preload="auto" loop crossorigin="anonymous"></video>
-<video id="video1" playsinline preload="auto" loop crossorigin="anonymous"></video>
-<video id="video2" playsinline preload="auto" loop crossorigin="anonymous"></video>
-<video id="video3" playsinline preload="auto" loop crossorigin="anonymous"></video>
-<video id="video4" playsinline preload="auto" loop crossorigin="anonymous"></video>
-<video id="video5" playsinline preload="auto" loop crossorigin="anonymous"></video>
-<video id="video6" playsinline preload="auto" loop crossorigin="anonymous"></video>
-<video id="video7" playsinline preload="auto" loop crossorigin="anonymous"></video>
-<video id="video8" playsinline preload="auto" loop crossorigin="anonymous"></video>
-<video id="video9" playsinline preload="auto" loop crossorigin="anonymous"></video>
+<a-scene 
+  mindar-image="imageTargetSrc: ./targets.mind; uiLoading: no; uiError: no; autoStart: false;"
+  vr-mode-ui="enabled: false"
+  device-orientation-permission-ui="enabled: false"
+  renderer="antialias: true; alpha: true; colorManagement: true;">
 
-</a-assets>
+  <a-assets>
+    <video id="driveVideo" playsinline webkit-playsinline loop crossorigin="anonymous" muted></video>
+  </a-assets>
 
-<a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
+  <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-<!-- 10 Targets -->
-<a-entity mindar-image-target="targetIndex:0"><a-plane id="plane0" width="1" height="1" visible="false" material="src:#video0; side:double;"></a-plane></a-entity>
-<a-entity mindar-image-target="targetIndex:1"><a-plane id="plane1" width="1" height="1" visible="false" material="src:#video1; side:double;"></a-plane></a-entity>
-<a-entity mindar-image-target="targetIndex:2"><a-plane id="plane2" width="1" height="1" visible="false" material="src:#video2; side:double;"></a-plane></a-entity>
-<a-entity mindar-image-target="targetIndex:3"><a-plane id="plane3" width="1" height="1" visible="false" material="src:#video3; side:double;"></a-plane></a-entity>
-<a-entity mindar-image-target="targetIndex:4"><a-plane id="plane4" width="1" height="1" visible="false" material="src:#video4; side:double;"></a-plane></a-entity>
-<a-entity mindar-image-target="targetIndex:5"><a-plane id="plane5" width="1" height="1" visible="false" material="src:#video5; side:double;"></a-plane></a-entity>
-<a-entity mindar-image-target="targetIndex:6"><a-plane id="plane6" width="1" height="1" visible="false" material="src:#video6; side:double;"></a-plane></a-entity>
-<a-entity mindar-image-target="targetIndex:7"><a-plane id="plane7" width="1" height="1" visible="false" material="src:#video7; side:double;"></a-plane></a-entity>
-<a-entity mindar-image-target="targetIndex:8"><a-plane id="plane8" width="1" height="1" visible="false" material="src:#video8; side:double;"></a-plane></a-entity>
-<a-entity mindar-image-target="targetIndex:9"><a-plane id="plane9" width="1" height="1" visible="false" material="src:#video9; side:double;"></a-plane></a-entity>
+  <a-entity id="target0" class="ar-target" mindar-image-target="targetIndex: 0">
+    <a-plane class="video-plane" width="1" height="1" visible="false" material="src: #driveVideo; side: double; transparent: true; shader: flat;"></a-plane>
+  </a-entity>
+
+  <a-entity id="target1" class="ar-target" mindar-image-target="targetIndex: 1">
+    <a-plane class="video-plane" width="1" height="1" visible="false" material="src: #driveVideo; side: double; transparent: true; shader: flat;"></a-plane>
+  </a-entity>
+
+  <a-entity id="target2" class="ar-target" mindar-image-target="targetIndex: 2">
+    <a-plane class="video-plane" width="1" height="1" visible="false" material="src: #driveVideo; side: double; transparent: true; shader: flat;"></a-plane>
+  </a-entity>
 
 </a-scene>
 
 <script>
+const API_KEY = "AIzaSyC_6UEJhSjWUnWaXlBpHy9MYiJAWiX5EBI"; 
+const FOLDER_MAPPING = {
+  0: "1VwMKpxjmNMy02Roe_qEDG8Dw3lsgIveV",
+  1: "1TZMdimrOzo_0j2esYkj74ELdSIXBQSjl",
+  2: "1gSqItbKhJpLvYBGQv1NI0fWXkJFJp31S"
+};
 
-/* ===============================
-   CONFIGURATION
-================================ */
-const API_KEY = "YOUR_API_KEY_HERE";
-
-/* 10 Dummy Folder IDs */
-const FOLDERS = [
-"FOLDER_ID_0",
-"FOLDER_ID_1",
-"FOLDER_ID_2",
-"FOLDER_ID_3",
-"FOLDER_ID_4",
-"FOLDER_ID_5",
-"FOLDER_ID_6",
-"FOLDER_ID_7",
-"FOLDER_ID_8",
-"FOLDER_ID_9"
-];
-
-/* ===============================
-   FETCH LATEST VIDEO FROM FOLDER
-================================ */
-async function getLatestVideo(folderId){
-const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType+contains+'video/'&orderBy=modifiedTime desc&pageSize=1&fields=files(id)&key=${API_KEY}`;
-try{
-const res = await fetch(url);
-const data = await res.json();
-if(data.files && data.files.length>0){
-return data.files[0].id;
-}
-}catch(e){ console.error(e); }
-return null;
+async function getLatestVideo(targetIndex) {
+  const folderId = FOLDER_MAPPING[targetIndex];
+  const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType+contains+'video/'&orderBy=modifiedTime+desc&pageSize=1&fields=files(id)&key=${API_KEY}`;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    return (data.files && data.files.length > 0) ? data.files[0].id : null;
+  } catch (e) { return null; }
 }
 
-/* ===============================
-   MAIN ENGINE
-================================ */
-window.addEventListener("load", async ()=>{
+window.addEventListener("load", () => {
+  const videoEl = document.querySelector("#driveVideo");
+  const toggleButton = document.querySelector("#toggleButton");
+  const buttonsContainer = document.querySelector("#planButtons");
+  const curtain = document.querySelector("#blackCurtain");
+  const sceneEl = document.querySelector('a-scene');
 
-const sceneEl = document.querySelector("a-scene");
-sceneEl.addEventListener("arReady", ()=>{
-const curtain=document.querySelector("#blackCurtain");
-curtain.style.opacity="0";
-setTimeout(()=>curtain.style.display="none",500);
+  let isPlaying = false;
+  let activeTargetIndex = null;
+
+  curtain.addEventListener("click", () => {
+    sceneEl.systems['mindar-image-system'].start();
+    // Pre-warming the video element
+    videoEl.play().then(() => videoEl.pause());
+    document.querySelector("#loader").innerText = "Opening Camera...";
+  });
+
+  sceneEl.addEventListener("arReady", () => {
+    curtain.style.opacity = "0";
+    setTimeout(() => { curtain.style.display = "none"; }, 500);
+  });
+
+  document.querySelectorAll('.ar-target').forEach((targetEl, index) => {
+    targetEl.addEventListener("targetFound", async () => {
+      activeTargetIndex = index;
+      buttonsContainer.style.display = "block";
+      const fileId = await getLatestVideo(index);
+      if (fileId) {
+        // Updated Google Drive link format for better compatibility
+        videoEl.src = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${API_KEY}`;
+        videoEl.load();
+        
+        // Ensure video displays once it starts playing
+        videoEl.oncanplay = () => {
+          videoEl.play();
+          isPlaying = true;
+          toggleButton.textContent = "⏸ Pause Video";
+        };
+      }
+    });
+
+    targetEl.addEventListener("targetLost", () => {
+      if (activeTargetIndex === index) {
+        buttonsContainer.style.display = "none";
+        videoEl.pause();
+        targetEl.querySelector('.video-plane').setAttribute('visible', 'false');
+        isPlaying = false;
+        toggleButton.textContent = "▶️ Play Video";
+        activeTargetIndex = null;
+      }
+    });
+  });
+
+  videoEl.addEventListener('playing', () => {
+    if (activeTargetIndex !== null) {
+      document.querySelector(`#target${activeTargetIndex} .video-plane`).setAttribute('visible', 'true');
+    }
+  });
+
+  toggleButton.addEventListener("click", () => {
+    if (videoEl.paused) {
+      videoEl.muted = false; // Unmute on first click
+      videoEl.play();
+      toggleButton.textContent = "⏸ Pause Video";
+      isPlaying = true;
+    } else {
+      videoEl.pause();
+      toggleButton.textContent = "▶️ Play Video";
+      isPlaying = false;
+    }
+  });
 });
-
-for(let i=0;i<10;i++){
-
-const video=document.querySelector(`#video${i}`);
-const plane=document.querySelector(`#plane${i}`);
-const target=document.querySelectorAll("[mindar-image-target]")[i];
-
-const fileId = await getLatestVideo(FOLDERS[i]);
-
-if(fileId){
-video.src=`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${API_KEY}`;
-video.load();
-}
-
-target.addEventListener("targetFound", async ()=>{
-plane.setAttribute("visible","true");
-video.muted=false;
-await video.play();
-});
-
-target.addEventListener("targetLost", ()=>{
-video.pause();
-plane.setAttribute("visible","false");
-});
-
-}
-
-});
-
-document.addEventListener("contextmenu",e=>e.preventDefault());
-
 </script>
 
 </body>
