@@ -3,32 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>JEWELS-AI | Multi-Target Drive AR</title>
+  <title>JEWELS-AI | 10 Target Drive AR</title>
 
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
   <style>
     body { margin: 0; background: #000; overflow: hidden; font-family: sans-serif; }
-    
-    /* Splash Screen */
     #blackCurtain {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: #000; z-index: 99999; display: flex;
       flex-direction: column; justify-content: center; align-items: center;
       transition: opacity 0.5s ease; cursor: pointer;
     }
-
-    /* Loading Spinner for Video */
     #videoLoader {
       position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
       color: white; background: rgba(0,0,0,0.7); padding: 15px; border-radius: 10px;
       z-index: 500; display: none; font-weight: bold;
     }
-
     .button-panel { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: none; z-index: 100; }
     .plan-button { padding: 14px 28px; border-radius: 12px; background: #5E0F8B; color: #fff; border: none; font-weight: bold; cursor: pointer; }
-    
     #instagramButton { position: fixed; bottom: 25px; right: 25px; width: 55px; height: 55px; z-index: 1000; background: white; border-radius: 14px; display: flex; align-items: center; justify-content: center; }
     #instagramButton img { width: 38px; height: 38px; }
     [class^="mindar-ui"] { display: none !important; }
@@ -76,31 +70,31 @@
     <a-plane class="video-plane" width="1" height="1" visible="false" material="src: #driveVideo; transparent: true; shader: flat;"></a-plane>
   </a-entity>
 
-  <a-entity id="target0" class="ar-target" mindar-image-target="targetIndex: 0">
+  <a-entity id="target3" class="ar-target" mindar-image-target="targetIndex: 3">
     <a-plane class="video-plane" width="1" height="1" visible="false" material="src: #driveVideo; transparent: true; shader: flat;"></a-plane>
   </a-entity>
 
-  <a-entity id="target1" class="ar-target" mindar-image-target="targetIndex: 1">
+  <a-entity id="target4" class="ar-target" mindar-image-target="targetIndex: 4">
     <a-plane class="video-plane" width="1" height="1" visible="false" material="src: #driveVideo; transparent: true; shader: flat;"></a-plane>
   </a-entity>
 
-  <a-entity id="target2" class="ar-target" mindar-image-target="targetIndex: 2">
+  <a-entity id="target5" class="ar-target" mindar-image-target="targetIndex: 5">
     <a-plane class="video-plane" width="1" height="1" visible="false" material="src: #driveVideo; transparent: true; shader: flat;"></a-plane>
   </a-entity>
 
-  <a-entity id="target0" class="ar-target" mindar-image-target="targetIndex: 0">
+  <a-entity id="target6" class="ar-target" mindar-image-target="targetIndex: 6">
     <a-plane class="video-plane" width="1" height="1" visible="false" material="src: #driveVideo; transparent: true; shader: flat;"></a-plane>
   </a-entity>
 
-  <a-entity id="target1" class="ar-target" mindar-image-target="targetIndex: 1">
+  <a-entity id="target7" class="ar-target" mindar-image-target="targetIndex: 7">
     <a-plane class="video-plane" width="1" height="1" visible="false" material="src: #driveVideo; transparent: true; shader: flat;"></a-plane>
   </a-entity>
 
-  <a-entity id="target2" class="ar-target" mindar-image-target="targetIndex: 2">
+  <a-entity id="target8" class="ar-target" mindar-image-target="targetIndex: 8">
     <a-plane class="video-plane" width="1" height="1" visible="false" material="src: #driveVideo; transparent: true; shader: flat;"></a-plane>
   </a-entity>
 
-  <a-entity id="target2" class="ar-target" mindar-image-target="targetIndex: 2">
+  <a-entity id="target9" class="ar-target" mindar-image-target="targetIndex: 9">
     <a-plane class="video-plane" width="1" height="1" visible="false" material="src: #driveVideo; transparent: true; shader: flat;"></a-plane>
   </a-entity>
 
@@ -137,17 +131,19 @@ window.addEventListener("load", () => {
   const sceneEl = document.querySelector('a-scene');
   const loader = document.querySelector("#videoLoader");
 
-  // Unlock camera on tap
+  let activeIndex = null;
+
   document.querySelector("#blackCurtain").addEventListener("click", (e) => {
     sceneEl.systems['mindar-image-system'].start();
-    videoEl.play().then(() => videoEl.pause()); // Unlock hardware
+    videoEl.play().then(() => videoEl.pause());
     e.currentTarget.style.display = "none";
   });
 
   document.querySelectorAll('.ar-target').forEach((targetEl, index) => {
     targetEl.addEventListener("targetFound", async () => {
+      activeIndex = index;
       document.querySelector("#planButtons").style.display = "block";
-      loader.style.display = "block"; // Show downloading message
+      loader.style.display = "block";
       
       const fileId = await getLatestVideo(index);
       if (fileId) {
@@ -155,7 +151,7 @@ window.addEventListener("load", () => {
         videoEl.load();
         
         videoEl.oncanplay = () => {
-          loader.style.display = "none"; // Hide message
+          loader.style.display = "none";
           videoEl.play();
           toggleButton.textContent = "⏸ Pause Video";
         };
@@ -166,16 +162,19 @@ window.addEventListener("load", () => {
       document.querySelector("#planButtons").style.display = "none";
       videoEl.pause();
       targetEl.querySelector('.video-plane').setAttribute('visible', 'false');
+      activeIndex = null;
     });
   });
 
   videoEl.addEventListener('playing', () => {
-    document.querySelectorAll('.video-plane').forEach(p => p.setAttribute('visible', 'true'));
+    if (activeIndex !== null) {
+      document.querySelector(`#target${activeIndex} .video-plane`).setAttribute('visible', 'true');
+    }
   });
 
   toggleButton.addEventListener("click", () => {
     if (videoEl.paused) {
-      videoEl.muted = false; // Unmute so you can hear the JEWELS-AI promo
+      videoEl.muted = false;
       videoEl.play();
       toggleButton.textContent = "⏸ Pause Video";
     } else {
