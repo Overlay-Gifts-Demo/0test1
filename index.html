@@ -99,7 +99,7 @@ window.addEventListener("load", () => {
 
   curtain.addEventListener("click", () => {
     sceneEl.systems['mindar-image-system'].start();
-    // Pre-warming the video element
+    // Pre-warm the video element for mobile hardware
     videoEl.play().then(() => videoEl.pause());
     document.querySelector("#loader").innerText = "Opening Camera...";
   });
@@ -115,12 +115,12 @@ window.addEventListener("load", () => {
       buttonsContainer.style.display = "block";
       const fileId = await getLatestVideo(index);
       if (fileId) {
-        // Updated Google Drive link format for better compatibility
+        // Updated URL format for standard web players
         videoEl.src = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${API_KEY}`;
         videoEl.load();
         
-        // Ensure video displays once it starts playing
-        videoEl.oncanplay = () => {
+        // Force rendering logic
+        videoEl.onloadeddata = () => {
           videoEl.play();
           isPlaying = true;
           toggleButton.textContent = "⏸ Pause Video";
@@ -140,6 +140,7 @@ window.addEventListener("load", () => {
     });
   });
 
+  // This ensures the square only appears when there are actual video frames to show
   videoEl.addEventListener('playing', () => {
     if (activeTargetIndex !== null) {
       document.querySelector(`#target${activeTargetIndex} .video-plane`).setAttribute('visible', 'true');
@@ -148,7 +149,7 @@ window.addEventListener("load", () => {
 
   toggleButton.addEventListener("click", () => {
     if (videoEl.paused) {
-      videoEl.muted = false; // Unmute on first click
+      videoEl.muted = false; // Unmute on interaction
       videoEl.play();
       toggleButton.textContent = "⏸ Pause Video";
       isPlaying = true;
